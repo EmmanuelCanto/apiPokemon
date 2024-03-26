@@ -1,29 +1,45 @@
 import requests
 
-# Elige un Pokémon
-pokemon_name = "Pikachu"
+class Pokemon:
 
-# Crea la URL de la API
-url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_name
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.propiedades = requests.get(f"https://pokeapi.co/api/v2/pokemon/{nombre.lower()}")
+        self.respuesta = self.respuesta.json() if self.respuesta==200 else False
 
-# Haz una llamada a la API
-response = requests.get(url)
+        
+    
+# def obtener_informacion_pokemon(self):
+#     url = f"https://pokeapi.co/api/v2/pokemon/{nombre_pokemon.lower()}"
+#     respuesta = requests.get(url)
+#     return True
+#     if respuesta.status_code == 200:
+#         datos_pokemon = respuesta.json()
+#         nombre = datos_pokemon['name']
+#         id = datos_pokemon['id']
+#         tipos = [tipo['type']['name'] for tipo in datos_pokemon['types']]
+        
+#         print(f"Nombre: {nombre}")
+#         print(f"ID: {id}")
+#         print("Tipos:")
+#         for tipo in tipos:
+#             print(f"- {tipo}")
+#     else:
+#         print(f"Error: No se pudo obtener la información del Pokémon {nombre_pokemon}")
 
-# Si la llamada a la API es exitosa, analiza la respuesta
-if response.status_code == 200:
-    data = response.json()
-    # Imprime el nombre del Pokémon
-    print("Nombre:", data["name"])
 
-    # Imprime los tipos del Pokémon
-    print("Tipos:", data["types"])
+    def obtener_habilidades_pokemon(self):
+        if(self.respuesta!=False):
+            for h in self.propiedades:
+                print()
+            
 
-    # Imprime las habilidades del Pokémon
-    print("Habilidades:", data["abilities"])
+    def menu_informacion_pokemon():
+        print("1.- Habilidades")
+        print("2.- Debilidades")
+        print("3.- Propiedades")
+        print("4.- Evoluciones")
+# Ejemplo de uso
+miPokemon = input("Introduce el nombre de un Pokémon: ")
 
-    # Imprime las estadísticas del Pokémon
-    print("Estadísticas:", data["stats"])
-
-else:
-    # Imprime un mensaje de error
-    print("Error:", response.status_code)
+obtener_informacion_pokemon(nombre_pokemon)
