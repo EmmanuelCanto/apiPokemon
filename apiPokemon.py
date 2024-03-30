@@ -1,5 +1,3 @@
-
-
 import requests
 import json
 
@@ -7,13 +5,21 @@ class Pokemon:
     def __init__(self, nombre):
         self.nombre = nombre
         self.propiedades = requests.get(f"https://pokeapi.co/api/v2/pokemon/{nombre.lower()}")
-        self.respuesta = self.propiedades.json() if self.propiedades.status_code == 200 else False
-        if self.respuesta:
+        try:
+            self.propiedades.loads("{}")
+            print("¡Se encontró la información del Pokémon!")
+            self.respuesta = self.propiedades.json()
             self.id = self.respuesta["id"]
             self.altura = self.respuesta["height"]
             self.peso = self.respuesta["weight"]
             self.tipo = self.respuesta["types"][0]["type"]["name"]
+            self.encontrado = True
+        except AttributeError:
+            self.encontrado = False
             
+    def encontrado(self):
+        return self.encontrado
+    
     def criaturas(self):
         if self.respuesta:
             print("Id:", self.id)
@@ -26,8 +32,8 @@ class Pokemon:
     def debilidades(self):
         
         tabla_tipos = {
-            "fire": {"fire": 0.5, "water": 0.5, "grass": 2, "electric": 1},  # Example of weaknesses and resistances of the Fire type
-            "water": {"fire": 2, "water": 0.5, "grass": 0.5, "electric": 1},  # Example of weaknesses and resistances of the Water type
+            "fire": {"fire": 0.5, "water": 0.5, "grass": 2, "electric": 1},  
+            "water": {"fire": 2, "water": 0.5, "grass": 0.5, "electric": 1},
             "steel": {"steel": 0.5, "fighting": 2, "fire": 1, "water": 0.5, "grass": 1, "flying": 1, "psychic": 1, "fairy": 1, "ground": 2},
             "bug": {"bug": 1, "fighting": 0.5, "flying": 2, "fire": 0.5, "grass": 2, "poison": 0.5, "rock": 2, "fairy": 0.5},
             "dragon": {"dragon": 1, "fairy": 0, "ice": 2, "dragon": 2, "steel": 0.5},
@@ -71,7 +77,6 @@ class Pokemon:
             evoluciones = []
 
             def obtener_recursivo(chain):
-                print("Evoluciones:")
                 if "species" in chain:
                     evoluciones.append(chain["species"]["name"])
                     print(chain["species"]["name"])
@@ -80,6 +85,7 @@ class Pokemon:
                         obtener_recursivo(evolucion)
 
             if "chain" in json_evoluciones.json():
+                print("Evoluciones:")
                 obtener_recursivo(json_evoluciones.json()["chain"])
 
 
@@ -102,10 +108,12 @@ def menu_informacion_pokemon(pokemon):
         pokemon.criaturas()
     elif opcion == "4":
         pokemon.evoluciones()
-    elif opcion == 5:
+    elif opcion == "5":
         return False
     else:
         print("Opción no válida.")
+        
+    return True
 
 continuar = True
 while continuar:
@@ -113,8 +121,15 @@ while continuar:
     if nombre_pokemon.lower() == "salir":
         continuar = False
     else:
-        mismoPokemon = False
+        mismoPokemon = True
         while mismoPokemon:
             mi_pokemon = Pokemon(nombre_pokemon)
-            mismoPokemon = menu_informacion_pokemon(mi_pokemon, continuar)
+            mismoPokemon = mi_pokemon.encontrado
+            if mismoPokemon:
+                print("¡Se encontró la información del Pokémon!")
+                mismoPokemon = menu_informacion_pokemon(mi_pokemon)
+            else:
+                print("No se pudo encontrar información para el Pokémon ingresado.")
+
+            
             
