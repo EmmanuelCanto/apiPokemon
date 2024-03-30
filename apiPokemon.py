@@ -6,15 +6,19 @@ class Pokemon:
         self.nombre = nombre
         self.propiedades = requests.get(f"https://pokeapi.co/api/v2/pokemon/{nombre.lower()}")
         try:
-            self.propiedades.loads("{}")
-            print("¡Se encontró la información del Pokémon!")
             self.respuesta = self.propiedades.json()
-            self.id = self.respuesta["id"]
-            self.altura = self.respuesta["height"]
-            self.peso = self.respuesta["weight"]
-            self.tipo = self.respuesta["types"][0]["type"]["name"]
-            self.encontrado = True
+            if len(self.respuesta) == 0:
+                print("¡No se encontró información del Pokémon!")
+                self.encontrado = False
+            else:
+                print("¡Se encontró la información del Pokémon!")
+                self.id = self.respuesta["id"]
+                self.altura = self.respuesta["height"]
+                self.peso = self.respuesta["weight"]
+                self.tipo = self.respuesta["types"][0]["type"]["name"]
+                self.encontrado = True
         except AttributeError:
+            print("¡No se encontró información del Pokémon!")
             self.encontrado = False
             
     def encontrado(self):
@@ -26,6 +30,7 @@ class Pokemon:
             print("Tipo:", self.tipo)
             print("Altura:", self.altura)
             print("Peso:", self.peso)
+            
         else:
             print("No se encontraron propiedades para este Pokémon.")
         
